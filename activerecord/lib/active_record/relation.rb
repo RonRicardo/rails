@@ -1341,7 +1341,14 @@ module ActiveRecord
       end
 
       def _create(attributes, &block)
-        model.create(attributes, &block)
+        record = model.create(attributes, &block)
+        if loaded?
+          ## can we turn this into a helper like add_record_to_target
+          records = @records.dup
+          records << record
+          @records = records.freeze
+        end
+        record
       end
 
       def _create!(attributes, &block)
